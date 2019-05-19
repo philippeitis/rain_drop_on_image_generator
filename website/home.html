@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+        <title>rainyday.js demo #2</title>
+        <style media="screen">
+            body {
+                overflow: hidden;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+
+            img {
+                width: 100%;
+                height: 100%;
+            }
+
+        </style>
+        <script src="rainyday.js"></script>
+        <script>
+            function run() {
+                new RainyDay({
+                        image: 'background',
+                        blur: 0,
+                        enableCollisions: true,
+                        enableSizeChange: true,
+                        gravityAngle: Math.PI / 2,
+                        gravityAngleVariance: Math.PI / 6,
+                        gravityThreshold: 2,
+                    });
+            }
+
+        </script>
+    </head>
+
+    <body onload="run();">
+        <img id="background" alt="background" src="demo.jpg" />
+    </body>
+
+</html>
