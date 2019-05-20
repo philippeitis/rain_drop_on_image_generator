@@ -161,6 +161,8 @@ def set_drop_sizes(drop_locations, min_size, max_size):
 
 ## Need to generate distortions
 def generate_drop_images(drops, drop_image):
+    from PIL import ImageFilter
+
     drop_image_arr = []
     for drop in drops:
         drop_image_copy = drop_image.copy()
