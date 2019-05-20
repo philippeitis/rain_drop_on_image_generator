@@ -41,6 +41,7 @@ def get_image(filename):
 def circle_crop(im):
     from PIL import Image, ImageOps, ImageDraw
     import math
+    import operator
 
     size = (512, 512)
     mask = Image.new('L', size, 0)
@@ -82,7 +83,20 @@ def circle_crop(im):
 
             if new_x >= 512:
                 new_x = 511
-            pixels[new_x, new_y] = im.getpixel((get_pixel_x, get_pixel_y))
+
+            arr = []
+            arr.append(pixels[new_x,new_y])
+            arr = [x for xs in arr for x in xs]
+            arr2 = []
+            arr2.append(im.getpixel((get_pixel_x, get_pixel_y)))
+            arr2 = [x for xs in arr2 for x in xs]
+
+            arr[0] = round((arr[0]+arr2[0])/2)
+            arr[1] = round((arr[1]+arr2[1])/2)
+            arr[2] = round((arr[2]+arr2[2])/2)
+            arr[3] = round((arr[3]+arr2[3])/2)
+
+            pixels[new_x, new_y] = (arr[0],arr[1],arr[2],arr[3])
 
     square_im.show()
     output = ImageOps.fit(square_im, mask.size, centering=(0.5, 0.5))
