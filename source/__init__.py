@@ -40,18 +40,53 @@ def get_image(filename):
 
 def circle_crop(im):
     from PIL import Image, ImageOps, ImageDraw
+    import math
 
-    size = (128, 128)
+    size = (512, 512)
     mask = Image.new('L', size, 0)
     draw = ImageDraw.Draw(mask)
     draw.ellipse((0, 0) + size, fill=255)
 
-    output = ImageOps.fit(im, mask.size, centering=(0.5, 0.5))
+    ## Starts by taking image and mapping to circle
+
+    x,y = im.size ## get x y dimensions
+    ## x y are from -1 to 1
+    mid_x = x // 2
+    mid_y = y // 2
+
+    square_im = Image.new('RGBA', size, 0)
+    pixels = square_im.load()
+
+    im = im.transpose(Image.FLIP_LEFT_RIGHT)
+    im = im.transpose(Image.FLIP_TOP_BOTTOM)
+
+    for get_pixel_x in range(0,x):
+        for get_pixel_y in range(0,y):
+            old_x = get_pixel_x
+            old_y = get_pixel_y
+
+            old_x -= mid_x
+            old_x /= mid_x
+            old_y -= mid_y
+            old_y /= mid_y
+
+            new_x = old_x * math.sqrt(1 - old_y ** 2 / 2)
+            new_y = old_y * math.sqrt(1 - old_x ** 2 / 2)
+
+            new_x = 256*new_x + 256
+            new_y = 256*new_y + 256
+            new_x = round(new_x)
+            new_y = round(new_y)
+            if new_y >= 512:
+                new_y = 511
+
+            if new_x >= 512:
+                new_x = 511
+            pixels[new_x, new_y] = im.getpixel((get_pixel_x, get_pixel_y))
+
+    square_im.show()
+    output = ImageOps.fit(square_im, mask.size, centering=(0.5, 0.5))
     output.putalpha(mask)
-
-    output = output.transpose(Image.FLIP_LEFT_RIGHT)
-    output = output.transpose(Image.FLIP_TOP_BOTTOM)
-
     return output
 
 
